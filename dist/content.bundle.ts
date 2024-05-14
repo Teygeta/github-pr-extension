@@ -19,8 +19,6 @@ async function fetchFiles() {
 
   const accessToken = "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"
 
-  console.log('accessToken', accessToken)
-
   try {
     const response = await fetch(`https://api.github.com/repos/${repoPath}/pulls/${currentPrNumber}/files`, {
       headers: {
