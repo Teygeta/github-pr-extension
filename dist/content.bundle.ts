@@ -1,3 +1,5 @@
+/******/ (() => { // webpackBootstrap
+var __webpack_exports__ = {};
 const isGitHubPullRequestPage = () => /.*github.com\/.*\/pull\/.*/.test(window.location.href)
 
 const titleInput = document.querySelector('.form-control.js-quick-submit')
@@ -15,7 +17,9 @@ async function fetchFiles() {
   const currentPrNumber = window.location.href.split('pull/')[1].split('/')[0]
   const repoPath = window.location.href.split('github.com/')[1].split('/pull')[0]
 
-  const accessToken = process.env.GITHUB_ACCESS_TOKEN
+  const accessToken = "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"
+
+  console.log('accessToken', accessToken)
 
   try {
     const response = await fetch(`https://api.github.com/repos/${repoPath}/pulls/${currentPrNumber}/files`, {
@@ -55,3 +59,6 @@ document.addEventListener('click', async (event) => {
     }
   }
 })
+
+/******/ })()
+;
