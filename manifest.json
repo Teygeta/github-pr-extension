@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "GitHub AI PR",
+  "version": "1.0.0",
+  "description": "An extension for GitHub that uses AI to write PRs for you.",
+  "permissions": [
+    "contextMenus",
+    "storage",
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["/ts/content.ts"]
+    }
+  ]
+}
