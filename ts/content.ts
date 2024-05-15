@@ -1,7 +1,7 @@
 const isGitHubPullRequestPage = () => /.*github.com\/.*\/pull\/.*/.test(window.location.href)
 
 const titleInput = document.querySelector('.form-control.js-quick-submit')
-const editSaveButtonsContainer = document.querySelector('.js-issue-update.js-comment')
+const editPRButtonsContainer = document.querySelector('.js-issue-update.js-comment')
 
 const aiMagicButton = document.createElement('button')
 aiMagicButton.innerText = 'AI'
@@ -23,6 +23,11 @@ async function fetchFiles() {
         Authorization: `token ${accessToken}`,
       },
     })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    
     const data = await response.json()
 
     return data
@@ -45,8 +50,8 @@ document.addEventListener('click', async (event) => {
     return
   }
 
-  if (editSaveButtonsContainer) {
-    editSaveButtonsContainer.appendChild(aiMagicButton)
+  if (editPRButtonsContainer) {
+    editPRButtonsContainer.appendChild(aiMagicButton)
     if (event.target === aiMagicButton) {
       if (titleInput instanceof HTMLInputElement) {
         const output = await getTitleOutput()
