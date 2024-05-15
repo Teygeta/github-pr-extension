@@ -1,3 +1,5 @@
+import { GoogleGenerativeAI } from "@google/generative-ai"
+
 const isGitHubPullRequestPage = () => /.*github.com\/.*\/pull\/.*/.test(window.location.href)
 
 const titleInput = document.querySelector('.form-control.js-quick-submit')
@@ -24,10 +26,6 @@ async function fetchFiles() {
       },
     })
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
     const data = await response.json()
 
     return data
@@ -38,11 +36,34 @@ async function fetchFiles() {
 }
 
 async function getTitleOutput() {
-  let output = 'Magic AI Title'
   const files = await fetchFiles()
   console.log(files)
 
-  return output
+  const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || '')
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest"})
+
+  const prompt = `
+  Write a sentence that is at least 5 words long and no more than 12 words long, describing changes for a GitHub pull request.
+  This sentence must start with one of the following words: "chore", "docs", "feat", "fix", "refactor", "style", "test".
+  Do not use colons.
+  Do not use commas.
+  Do not use punctuation marks.
+  Do not use offensive or inappropriate words.
+  Use technical and specific terms for a code development context.
+  `
+  try {
+    const result = await model.generateContent(prompt)
+    const text = result.response.text()
+  
+    if (text) {
+      return text 
+    }
+  } catch (error) {
+    // if(error instanceof GoogleGenerativeAIFetchError) {
+    //     console.error('API rate limit exceeded')
+    //   }
+    // }
+  }
 }
 
 document.addEventListener('click', async (event) => {
@@ -55,7 +76,7 @@ document.addEventListener('click', async (event) => {
     if (event.target === aiMagicButton) {
       if (titleInput instanceof HTMLInputElement) {
         const output = await getTitleOutput()
-        titleInput.value = output
+        titleInput.value = output || ''
       }
     }
   }
