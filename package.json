@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A GitHub extension to generate titles for PRs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "webpack": "npx webpack --mode production --stats-error-details"
   },
   "keywords": [],
   "author": "Teygeta",

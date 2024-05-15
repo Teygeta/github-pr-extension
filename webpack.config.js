@@ -1,15 +1,22 @@
-const path = require('path');
-const Dotenv = require('dotenv-webpack');
+const path = require('path')
+const webpack = require('webpack')
 
-module.exports = {
+const options = {
   entry: {
-    content: './ts/content.ts',
+    content: path.join(__dirname, 'ts', 'content.ts'),
+  },
+  resolve: {
+    extensions: ['.ts', '.js']
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'build'),
     filename: '[name].bundle.ts',
   },
   plugins: [
-    new Dotenv()
+    new webpack.DefinePlugin({
+      'process.env.GITHUB_ACCESS_TOKEN': JSON.stringify(process.env.GITHUB_ACCESS_TOKEN),
+    }),
   ],
-};
+}
+
+module.exports = options
