@@ -2,21 +2,24 @@
   "name": "github-pr-extension",
   "version": "1.0.0",
   "description": "A GitHub extension to generate titles for PRs",
-  "scripts": {
-    "build": "npx webpack --mode production --stats-error-details"
-  },
-  "keywords": [],
   "author": "Teygeta",
   "license": "ISC",
-  "devDependencies": {
-    "@types/node": "^20.12.12",
-    "dotenv-webpack": "^8.1.0",
-    "tsx": "^4.10.2",
-    "webpack": "^5.91.0",
-    "webpack-cli": "^5.1.4"
+  "keywords": [],
+  "scripts": {
+    "build": "npx webpack --mode production --stats-error-details",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@google/generative-ai": "^0.11.1",
     "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.18.0",
+    "@types/node": "^20.12.12",
+    "dotenv-webpack": "^8.1.0",
+    "eslint": "^9.2.0",
+    "tsx": "^4.10.2",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
   }
 }

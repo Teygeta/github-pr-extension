@@ -1,5 +1,4 @@
-const path = require('path')
-const webpack = require('webpack')
+const path = require('node:path')
 const Dotenv = require('dotenv-webpack')
 
 const options = {
@@ -7,7 +6,7 @@ const options = {
     content: path.join(__dirname, 'ts', 'content.ts'),
   },
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: ['.ts', '.js'],
   },
   output: {
     path: path.resolve(__dirname, 'build'),
