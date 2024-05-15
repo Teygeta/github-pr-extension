@@ -1,5 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
+const Dotenv = require('dotenv-webpack')
 
 const options = {
   entry: {
@@ -13,9 +14,7 @@ const options = {
     filename: '[name].bundle.ts',
   },
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env.GITHUB_ACCESS_TOKEN': JSON.stringify(process.env.GITHUB_ACCESS_TOKEN),
-    }),
+    new Dotenv(),
   ],
 }
 
