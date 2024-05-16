@@ -1,5 +1,3 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
-
 const isGitHubPullRequestPage = () => /.*github.com\/.*\/pull\/.*/.test(window.location.href)
 
 const titleInput = document.querySelector('.form-control.js-quick-submit')
@@ -78,12 +76,32 @@ async function getPrompt() {
  */
 async function getTitleOutput() {
   const prompt = await getPrompt()
-  const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || '')
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro-latest' })
+
   try {
     aiMagicButton.textContent = 'AI generating...'
-    const result = await model.generateContent(prompt)
-    const text = result.response.text()
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${process.env.GOOGLE_GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: prompt,
+          }],
+        },
+        ],
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error('Error: AI failed to generate title')
+    }
+
+    const data = await response.json()
+
+    const text = data.candidates[0].content.parts[0].text
 
     if (text) {
       aiMagicButton.textContent = 'AI'
