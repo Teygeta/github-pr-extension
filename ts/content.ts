@@ -12,6 +12,9 @@ aiMagicButton.style.border = '1px solid #4593F8'
 aiMagicButton.style.color = '#4593F8'
 aiMagicButton.setAttribute('type', 'button')
 
+/*
+ * Logic for fetch files from current PR
+ */
 async function fetchFiles() {
   // url example: https://github.com/Teygeta/github-pr-extension/pull/1
   const currentPrNumber = window.location.href.split('pull/')[1].split('/')[0]
@@ -27,6 +30,7 @@ async function fetchFiles() {
     })
 
     const data = await response.json()
+    console.log(data)
 
     return data
   } catch (error) {
@@ -35,34 +39,57 @@ async function fetchFiles() {
   }
 }
 
-async function getTitleOutput() {
+/*
+ * Logic for generate prompt for AI
+ */
+async function getPrompt() {
   const files = await fetchFiles()
-  console.log(files)
+  let prompt = ''
 
-  const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || '')
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest"})
+  await Promise.all(files.map(async file => {
+    const fileName = file.filename
+    const filePatch = file.patch
 
-  const prompt = `
-  Write a sentence that is at least 5 words long and no more than 12 words long, describing changes for a GitHub pull request.
-  This sentence must start with one of the following words: "chore", "docs", "feat", "fix", "refactor", "style", "test".
-  Do not use colons.
-  Do not use commas.
-  Do not use punctuation marks.
-  Do not use offensive or inappropriate words.
-  Use technical and specific terms for a code development context.
+    prompt += `File: ${fileName}\n\n`
+    prompt += `
+    ---START PATCH---
+    Patch: ${fileName.includes('pnpm-lock.yaml') ? 'A long packeges changes' : filePatch}
+    ---END PATCH---
+    \n\n
+    `
+  }))
+
+  const promptInstructions = `
+    Write a title for the changes in max 20 words.
+    NB: 
+    - The title should be descriptive and concise, for a github pull request title.
+    - This is not a description of the PR, but a title.
   `
+  prompt += promptInstructions
+  console.log(prompt)
+
+  return prompt
+}
+
+/*
+ * Logic for generate title using GoogleGenerativeAI
+ */
+async function getTitleOutput() {
+  const prompt = await getPrompt()
+  const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || '')
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" })
   try {
     const result = await model.generateContent(prompt)
     const text = result.response.text()
-  
+
     if (text) {
-      return text 
+      return text
     }
   } catch (error) {
     // if(error instanceof GoogleGenerativeAIFetchError) {
     //     console.error('API rate limit exceeded')
     //   }
-    // }
+    return 'Error: AI failed to generate title'
   }
 }
 
