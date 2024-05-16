@@ -1,3 +1,4 @@
+// use vite instead of webpack
 const path = require('node:path')
 const Dotenv = require('dotenv-webpack')
 

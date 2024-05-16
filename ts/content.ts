@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai"
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const isGitHubPullRequestPage = () => /.*github.com\/.*\/pull\/.*/.test(window.location.href)
 
@@ -6,7 +6,7 @@ const titleInput = document.querySelector('.form-control.js-quick-submit')
 const editPRButtonsContainer = document.querySelector('.js-issue-update.js-comment')
 
 const aiMagicButton = document.createElement('button')
-aiMagicButton.innerText = 'AI'
+aiMagicButton.textContent = 'AI'
 aiMagicButton.classList.add('Button', 'Button--secondary', 'Button--medium')
 aiMagicButton.style.border = '1px solid #4593F8'
 aiMagicButton.style.color = '#4593F8'
@@ -30,10 +30,10 @@ async function fetchFiles() {
     })
 
     const data = await response.json()
-    console.log(data)
 
     return data
-  } catch (error) {
+  }
+  catch (error) {
     console.error(error)
     return []
   }
@@ -46,7 +46,7 @@ async function getPrompt() {
   const files = await fetchFiles()
   let prompt = ''
 
-  await Promise.all(files.map(async file => {
+  await Promise.all(files.map(async (file) => {
     const fileName = file.filename
     const filePatch = file.patch
 
@@ -79,21 +79,25 @@ async function getPrompt() {
 async function getTitleOutput() {
   const prompt = await getPrompt()
   const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || '')
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" })
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro-latest' })
   try {
-    aiMagicButton.innerText = 'AI generating...'    
+    aiMagicButton.textContent = 'AI generating...'
     const result = await model.generateContent(prompt)
     const text = result.response.text()
 
     if (text) {
-      aiMagicButton.innerText = 'AI'
+      aiMagicButton.textContent = 'AI'
       return text
     }
-  } catch (error) {
+  }
+  catch (error) {
     // if(error instanceof GoogleGenerativeAIFetchError) {
     //     console.error('API rate limit exceeded')
     //   }
     return 'Error: AI failed to generate title'
+  }
+  finally {
+    aiMagicButton.textContent = 'AI'
   }
 }
 
