@@ -27,6 +27,7 @@ async function fetchFiles() {
     })
 
     const data = await response.json()
+    console.log(data)
 
     return data
   } catch (error) {
@@ -37,7 +38,6 @@ async function fetchFiles() {
 
 async function getTitleOutput() {
   const files = await fetchFiles()
-  console.log(files)
 
   const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || '')
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest"})
