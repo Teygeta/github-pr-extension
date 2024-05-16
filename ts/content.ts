@@ -61,13 +61,15 @@ async function getPrompt() {
 
   const promptInstructions = `
     Write a title for the changes in max 20 words.
-    NB: 
+    
+    Rules for the title:
     - The title should be descriptive and concise, for a github pull request title.
     - This is not a description of the PR, but a title.
+    - Don't include the file name in the title.
+    - The title should be in present tense.
+    - Don't use characters, only words.
   `
   prompt += promptInstructions
-  console.log(prompt)
-
   return prompt
 }
 
@@ -79,10 +81,12 @@ async function getTitleOutput() {
   const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || '')
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" })
   try {
+    aiMagicButton.innerText = 'AI generating...'    
     const result = await model.generateContent(prompt)
     const text = result.response.text()
 
     if (text) {
+      aiMagicButton.innerText = 'AI'
       return text
     }
   } catch (error) {
