@@ -1,18 +1,4 @@
-const isGitHubPullRequestPage = () => /.*github.com\/.*\/pull\/.*/.test(window.location.href)
-
-const titleInput = document.querySelector('.form-control.js-quick-submit')
-const editPRButtonsContainer = document.querySelector('.js-issue-update.js-comment')
-
-const aiMagicButton = document.createElement('button')
-aiMagicButton.textContent = 'AI'
-aiMagicButton.classList.add('Button', 'Button--secondary', 'Button--medium')
-aiMagicButton.style.border = '1px solid #4593F8'
-aiMagicButton.style.color = '#4593F8'
-aiMagicButton.setAttribute('type', 'button')
-
-/*
- * Logic for fetch files from current PR
- */
+// Logic for fetch files from current PR
 async function fetchFiles() {
   // url example: https://github.com/Teygeta/github-pr-extension/pull/1
   const currentPrNumber = window.location.href.split('pull/')[1].split('/')[0]
@@ -37,9 +23,7 @@ async function fetchFiles() {
   }
 }
 
-/*
- * Logic for generate prompt for AI
- */
+// Logic for generate prompt for AI
 async function getPrompt() {
   const files = await fetchFiles()
   let prompt = ''
@@ -71,9 +55,15 @@ async function getPrompt() {
   return prompt
 }
 
-/*
- * Logic for generate title using GoogleGenerativeAI
- */
+// Create AI button
+const aiMagicButton = document.createElement('button')
+aiMagicButton.textContent = 'AI'
+aiMagicButton.classList.add('Button', 'Button--secondary', 'Button--medium')
+aiMagicButton.style.border = '1px solid #4593F8'
+aiMagicButton.style.color = '#4593F8'
+aiMagicButton.setAttribute('type', 'button')
+
+// Logic for generate title using GoogleGenerativeAI
 async function getTitleOutput() {
   const prompt = await getPrompt()
 
@@ -109,9 +99,7 @@ async function getTitleOutput() {
     }
   }
   catch (error) {
-    // if(error instanceof GoogleGenerativeAIFetchError) {
-    //     console.error('API rate limit exceeded')
-    //   }
+    // TODO: error handling
     return 'Error: AI failed to generate title'
   }
   finally {
@@ -119,18 +107,25 @@ async function getTitleOutput() {
   }
 }
 
-document.addEventListener('click', async (event) => {
-  if (!isGitHubPullRequestPage()) {
-    return
-  }
-
-  if (editPRButtonsContainer) {
-    editPRButtonsContainer.appendChild(aiMagicButton)
-    if (event.target === aiMagicButton) {
-      if (titleInput instanceof HTMLInputElement) {
-        const output = await getTitleOutput()
-        titleInput.value = output || ''
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.addedNodes.length > 0) {
+      const editPRButtonsContainer = document.querySelector('.js-issue-update.js-comment')
+      if (editPRButtonsContainer) {
+        editPRButtonsContainer.appendChild(aiMagicButton)
+        observer.disconnect()
       }
+    }
+  })
+})
+observer.observe(document.body, { childList: true, subtree: true })
+
+document.addEventListener('click', async (event) => {
+  if (event.target === aiMagicButton) {
+    const titleInput = document.querySelector('.form-control.js-quick-submit')
+    if (titleInput instanceof HTMLInputElement) {
+      const output = await getTitleOutput()
+      titleInput.value = output || ''
     }
   }
 })
