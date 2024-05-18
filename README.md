@@ -14,4 +14,5 @@ GOOGLE_GEMINI_API_KEY="your_api_key_here"
 ```bash
   pnpm i && pnpm build
 ```
-4. Enjoy!👻
+4. Install extension
+5. Enjoy!👻
