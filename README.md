@@ -1,4 +1,4 @@
-## GitHub Pull Requests title generator
+## GitHub Pull Requests title generator (for now, only with gemini-1.5-pro-latest model)
 🚧 Building 🚧
 
 A tool to generate a title for your GitHub Pull Requests, based on the changes you made in your code..
