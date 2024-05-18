@@ -1,13 +1,29 @@
 {
   "manifest_version": 3,
+  "homepage_url": "https://github.com/Teygeta/github-pr-extension",
   "name": "GitHub AI PR",
   "version": "1.0.0",
   "description": "An extension for GitHub that uses AI to write PRs for you.",
+  "icons": {
+    "128": "icon.png"
+  },
+  "action": {
+    "default_icon": {
+      "128": "icon.png"
+    }
+  },
   "permissions": [
     "contextMenus",
     "storage",
     "activeTab"
   ],
+  "host_permissions": [
+    "https://github.com/*",
+    "https://api.github.com/*"
+  ],
+  "options_ui": {
+    "page": "options/index.html"
+  },
   "content_scripts": [
     {
       "matches": [
