@@ -1,4 +1,5 @@
 const saveButton = document.getElementById('save')
+const saveStatus = document.getElementById('save-status')
 saveButton.addEventListener('click', saveOptions)
 
 function saveOptions() {
@@ -16,10 +17,14 @@ function saveOptions() {
 
         await restoreOptions()
 
-        saveButton.removeAttribute('disabled')
+        saveStatus.textContent = 'Saved!'
+        setTimeout(() => {
+          saveStatus.textContent = ''
+          saveButton.removeAttribute('disabled')
+        }, 1000)
       }
       catch (error) {
-        document.getElementById('save-status').textContent = error.message
+        saveStatus.textContent = error.message
       }
     },
   )

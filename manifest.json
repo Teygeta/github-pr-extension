@@ -5,11 +5,11 @@
   "version": "1.0.0",
   "description": "An extension for GitHub that uses AI to write PRs for you.",
   "icons": {
-    "128": "icon.png"
+    "128": "src/assets/icon.png"
   },
   "action": {
     "default_icon": {
-      "128": "icon.png"
+      "128": "src/assets/icon.png"
     }
   },
   "permissions": [
@@ -22,7 +22,7 @@
     "https://api.github.com/*"
   ],
   "options_ui": {
-    "page": "options/index.html"
+    "page": "src/options/index.html"
   },
   "content_scripts": [
     {
