@@ -1,5 +1,4 @@
-// Logic for fetch files from current PR
-async function fetchFiles() {
+async function fetchFilesFromGithub() {
   // url example: https://github.com/Teygeta/github-pr-extension/pull/1
   const currentPrNumber = window.location.href.split('pull/')[1].split('/')[0]
   const repoPath = window.location.href.split('github.com/')[1].split('/pull')[0]
@@ -24,8 +23,8 @@ async function fetchFiles() {
 }
 
 // Logic for generate prompt for AI
-async function getPrompt() {
-  const files = await fetchFiles()
+async function generatePrompt() {
+  const files = await fetchFilesFromGithub()
   let prompt = ''
 
   await Promise.all(files.map(async (file) => {
@@ -62,10 +61,10 @@ aiMagicButton.classList.add('Button', 'Button--secondary', 'Button--medium')
 aiMagicButton.style.border = '1px solid #4593F8'
 aiMagicButton.style.color = '#4593F8'
 aiMagicButton.setAttribute('type', 'button')
+aiMagicButton.addEventListener('click', getOutput)
 
-// Logic for generate title using GoogleGenerativeAI
 async function getTitleOutput() {
-  const prompt = await getPrompt()
+  const prompt = await generatePrompt()
 
   try {
     aiMagicButton.textContent = 'AI generating...'
@@ -107,8 +106,18 @@ async function getTitleOutput() {
   }
 }
 
+async function getOutput() {
+  const titleInput = document.querySelector('.form-control.js-quick-submit')
+  if (titleInput instanceof HTMLInputElement) {
+    const output = await getTitleOutput()
+    titleInput.value = output || ''
+  }
+}
+
 const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
+    const isGitHubPullRequestPage = () => /.*github.com\/.*\/pull\/.*/.test(window.location.href)
+    if (!isGitHubPullRequestPage()) { return }
     if (mutation.addedNodes.length > 0) {
       const editPRButtonsContainer = document.querySelector('.js-issue-update.js-comment')
       if (editPRButtonsContainer) {
@@ -119,13 +128,3 @@ const observer = new MutationObserver((mutations) => {
   })
 })
 observer.observe(document.body, { childList: true, subtree: true })
-
-document.addEventListener('click', async (event) => {
-  if (event.target === aiMagicButton) {
-    const titleInput = document.querySelector('.form-control.js-quick-submit')
-    if (titleInput instanceof HTMLInputElement) {
-      const output = await getTitleOutput()
-      titleInput.value = output || ''
-    }
-  }
-})
