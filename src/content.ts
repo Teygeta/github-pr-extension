@@ -1,20 +1,40 @@
 const GITHUB_API_BASE_URL = 'https://api.github.com/repos'
-const GITHUB_ACCESS_TOKEN = process.env.GITHUB_ACCESS_TOKEN
-const GOOGLE_GEMINI_API_KEY = process.env.GOOGLE_GEMINI_API_KEY
-
 const isGitHubPullRequestPage = () => /.*github.com\/.*\/pull\/.*/.test(window.location.href)
 const isGitHubComparePage = () => /.*github.com\/.*\/compare\/.*/.test(window.location.href)
 
 async function fetchFilesFromGithub() {
+  let GITHUB_API_TOKEN
+
+  try {
+    // Recupera il token da chrome.storage.sync
+    const storageData = await new Promise((resolve) => {
+      chrome.storage.sync.get({ githubAccessToken: '' }, (data) => {
+        resolve(data)
+      })
+    })
+
+    GITHUB_API_TOKEN = (storageData as { githubAccessToken: string }).githubAccessToken
+  }
+  catch (error) {
+    console.error('Error retrieving token from storage:', error)
+    return []
+  }
+
+  // Ottieni il token dalla variabile GITHUB_ACCESS_TOKEN
+  if (!GITHUB_API_TOKEN) {
+    console.error('GitHub Access Token not found.')
+    return []
+  }
+
   if (isGitHubPullRequestPage()) {
-  // Url example: https://github.com/Teygeta/github-pr-extension/pull/1
+    // Url example: https://github.com/Teygeta/github-pr-extension/pull/1
     const prNumber = window.location.href.split('pull/')[1].split('/')[0]
     const repoPath = window.location.href.split('github.com/')[1].split('/pull')[0]
 
     try {
       const response = await fetch(`${GITHUB_API_BASE_URL}/${repoPath}/pulls/${prNumber}/files`, {
         headers: {
-          Authorization: `token ${GITHUB_ACCESS_TOKEN}`,
+          Authorization: `token ${GITHUB_API_TOKEN}`,
         },
       })
 
@@ -23,7 +43,7 @@ async function fetchFilesFromGithub() {
       return data
     }
     catch (error) {
-      console.error(error)
+      console.error('Error fetching files from GitHub:', error)
       return []
     }
   }
@@ -36,7 +56,7 @@ async function fetchFilesFromGithub() {
     try {
       const response = await fetch(`${GITHUB_API_BASE_URL}/${repoPath}/compare/${baseBranch}...${headBranch}`, {
         headers: {
-          Authorization: `token ${GITHUB_ACCESS_TOKEN}`,
+          Authorization: `token ${GITHUB_API_TOKEN}`,
         },
       })
 
@@ -45,10 +65,11 @@ async function fetchFilesFromGithub() {
       return data.files
     }
     catch (error) {
-      console.error(error)
+      console.error('Error fetching files from GitHub:', error)
       return []
     }
   }
+
   return []
 }
 
@@ -57,7 +78,7 @@ async function generatePrompt() {
   const files = await fetchFilesFromGithub()
   let prompt = ''
 
-  await Promise.all(files.map(async ({ filename, patch }: { filename: string, patch: string }) => {
+  await Promise.all(files.map(async ({ filename, patch }: any) => {
     const patchText = filename.includes('pnpm-lock.yaml') ? 'A long packages changes' : patch
     prompt += `File: ${filename}\n\n---START PATCH---\nPatch: ${patchText}\n---END PATCH---\n\n`
   }))
@@ -87,6 +108,27 @@ Object.assign(aiMagicButton, {
 async function getTitleOutput() {
   const prompt = await generatePrompt()
   aiMagicButton.textContent = 'AI generating...'
+
+  let GOOGLE_GEMINI_API_KEY
+
+  try {
+    const storageData = await new Promise((resolve) => {
+      chrome.storage.sync.get({ geminiAPIKey: '' }, (data) => {
+        resolve(data)
+      })
+    })
+
+    GOOGLE_GEMINI_API_KEY = (storageData as { geminiAPIKey: string }).geminiAPIKey
+  }
+  catch (error) {
+    console.error('Error retrieving token from storage:', error)
+    return []
+  }
+
+  if (!GOOGLE_GEMINI_API_KEY) {
+    console.error('Gemini API key not found.')
+    return []
+  }
 
   try {
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${GOOGLE_GEMINI_API_KEY}`, {
