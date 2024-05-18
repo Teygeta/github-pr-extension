@@ -17,7 +17,7 @@ GOOGLE_GEMINI_API_KEY="your_api_key_here"
 4. Install extension
 5. Enjoy!👻
 
-### Where you find the buttons for generate Titles with AI
+### Where you find the buttons for generate Titles with AI:
 ![image](https://github.com/Teygeta/github-pr-extension/assets/98349901/814d054f-9775-41f8-a4d5-0a5809abc02b)
 ![image](https://github.com/Teygeta/github-pr-extension/assets/98349901/ef4db842-6c4d-453e-8d82-31fe2fbd0d0f)
 
