@@ -1,0 +1,16 @@
+html {
+  background-color: #2A2A2D;
+  color: white;
+  font-size: large;
+}
+
+body{
+  padding: 10px;
+}
+
+input {
+  background-color: #474749;
+  color: white;
+  padding: 4px;
+  border-radius: 5px;
+}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Test Extension Options</title>
+    <link rel="stylesheet" href="main.css">
+  </head>
+  <body>
+    <div>
+      <label style="display: flex;flex-direction: column;">
+        <span style="font-weight: 600;font-size: 16px;">
+          Github Access Token:
+        </span>
+        <input type="text" id="github-access-token" />
+      </label>
+      <br>
+    </div>
+    <div>
+			<div id="project-access-scope">Project access: <span id="check-project-access-scope">...</span></div>
+			<div id="repo-access-scope">Repository access: <span id="check-repo-access-scope">...</span></div>
+		</div>
+    <br>
+    <div>
+      <label style="display: flex;flex-direction: column;">
+        <span style="font-weight: 600;font-size: 16px;">
+          Gemini API Key:
+        </span>
+        <input type="text" id="gemini-api-key" />
+      </label>
+      <br>
+    </div>
+    <div>
+			<div id="project-access-scope">Project access: <span id="check-project-access-scope">...</span></div>
+			<div id="repo-access-scope">Repository access: <span id="check-repo-access-scope">...</span></div>
+		</div>
+    <br>
+
+    <div id="save-status"></div>
+    <button id="save">Save</button>
+
+    <script src="index.js"></script>
+  </body>
+</html>
