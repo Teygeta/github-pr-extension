@@ -11,7 +11,7 @@ A tool to generate a title for your GitHub Pull Requests, based on the changes y
 ## How to use
 1. Clone this repository
 2. Set up your Github Access Token and Gemini API Key in the extension settings
-![image](https://github.com/Teygeta/github-pr-extension/assets/98349901/75f228a9-37af-4e2b-8129-ae1cbb24ebb6)
+![image](https://github.com/Teygeta/github-pr-extension/assets/98349901/2939bbd8-5c63-4e95-a580-920a0314f907)
 
 3. Run the following command:
 ```bash
