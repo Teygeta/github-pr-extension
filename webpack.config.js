@@ -5,7 +5,7 @@ const Dotenv = require('dotenv-webpack')
 const options = {
   entry: {
     content: path.join(__dirname, 'src', 'content.ts'),
-    // background: path.join(__dirname, 'ts', 'background.ts'),
+    background: path.join(__dirname, 'src', 'background.ts'),
   },
   resolve: {
     extensions: ['.ts', '.js'],
