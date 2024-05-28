@@ -2,25 +2,34 @@ const GITHUB_API_BASE_URL = 'https://api.github.com/repos'
 const isGitHubPullRequestPage = () => /.*github.com\/.*\/pull\/.*/.test(window.location.href)
 const isGitHubComparePage = () => /.*github.com\/.*\/compare\/.*/.test(window.location.href)
 
+async function getToken(key: string): Promise<string | null> {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ action: 'getToken', key }, (response) => {
+      if (response.success) {
+        resolve(response.token)
+      }
+      else {
+        reject(new Error(`Token not found for key: ${key}`))
+      }
+    })
+  })
+}
+
 async function fetchFilesFromGithub() {
   let GITHUB_API_TOKEN
 
   try {
-    // Recupera il token da chrome.storage.sync
-    const storageData = await new Promise((resolve) => {
-      chrome.storage.sync.get({ githubAccessToken: '' }, (data) => {
-        resolve(data)
-      })
-    })
-
-    GITHUB_API_TOKEN = (storageData as { githubAccessToken: string }).githubAccessToken
+    GITHUB_API_TOKEN = await getToken('githubAccessToken')
+    if (!GITHUB_API_TOKEN) {
+      console.error('GitHub Access Token not found.')
+      return []
+    }
   }
   catch (error) {
     console.error('Error retrieving token from storage:', error)
     return []
   }
 
-  // Ottieni il token dalla variabile GITHUB_ACCESS_TOKEN
   if (!GITHUB_API_TOKEN) {
     console.error('GitHub Access Token not found.')
     return []
@@ -114,13 +123,11 @@ async function getTitleOutput() {
   let GOOGLE_GEMINI_API_KEY
 
   try {
-    const storageData = await new Promise((resolve) => {
-      chrome.storage.sync.get({ geminiAPIKey: '' }, (data) => {
-        resolve(data)
-      })
-    })
-
-    GOOGLE_GEMINI_API_KEY = (storageData as { geminiAPIKey: string }).geminiAPIKey
+    GOOGLE_GEMINI_API_KEY = await getToken('geminiAPIKey')
+    if (!GOOGLE_GEMINI_API_KEY) {
+      console.error('Gemini API key not found.')
+      return []
+    }
   }
   catch (error) {
     console.error('Error retrieving token from storage:', error)
