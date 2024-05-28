@@ -83,7 +83,7 @@ async function generatePrompt() {
     prompt += `File: ${filename}\n\n---START PATCH---\nPatch: ${patchText}\n---END PATCH---\n\n`
   }))
   const promptInstructions = `
-    Write a title for the changes in max 20 words.
+    Write a title for the changes below in max 20 words.
     
     Rules for the title:
     - The title should be descriptive and concise, for a github pull request title.
@@ -91,8 +91,10 @@ async function generatePrompt() {
     - Don't include the file name in the title.
     - The title should be in present tense.
     - Don't use symbols, only words. (* & ^ % $ # @ ! etc.)
+
+    The changes are:
   `
-  return prompt + promptInstructions
+  return promptInstructions + prompt
 }
 
 // Create AI button

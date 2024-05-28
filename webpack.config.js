@@ -12,7 +12,7 @@ const options = {
   },
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: '[name].bundle.ts',
+    filename: '[name].bundle.js',
   },
   plugins: [
     new Dotenv(),

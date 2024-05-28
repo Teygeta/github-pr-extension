@@ -24,6 +24,9 @@
   "options_ui": {
     "page": "src/options/index.html"
   },
+  "background": {
+    "service_worker": "build/background.bundle.js"
+  },
   "content_scripts": [
     {
       "matches": [
@@ -33,7 +36,7 @@
         "https://*/login/*"
       ],
       "js": [
-        "build/content.bundle.ts"
+        "build/content.bundle.js"
       ]
     }
   ]
