@@ -30,7 +30,8 @@
   "content_scripts": [
     {
       "matches": [
-        "https://github.com/*"
+        "https://github.com/*/compare/*",
+        "https://github.com/*/pull/*"
       ],
       "exclude_matches": [
         "https://*/login/*"
