@@ -1,4 +1,4 @@
-async function getToken(key: string): Promise<string | null> {
+export async function getToken(key: string): Promise<string | null> {
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage({ action: 'getToken', key }, (response) => {
       if (response.success) {
@@ -11,28 +11,9 @@ async function getToken(key: string): Promise<string | null> {
   })
 }
 
-export async function getTitleOutput(prompt: string) {
-  let GOOGLE_GEMINI_API_KEY
-
+export async function getTitleOutput(prompt: string, apiKey: string): Promise<string> {
   try {
-    GOOGLE_GEMINI_API_KEY = await getToken('aiApiKey')
-    if (!GOOGLE_GEMINI_API_KEY) {
-      console.error('Gemini API key not found.')
-      return []
-    }
-  }
-  catch (error) {
-    console.error('Error retrieving token from storage:', error)
-    return []
-  }
-
-  if (!GOOGLE_GEMINI_API_KEY) {
-    console.error('Gemini API key not found.')
-    return []
-  }
-
-  try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${GOOGLE_GEMINI_API_KEY}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),

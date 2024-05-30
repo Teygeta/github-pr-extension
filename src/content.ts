@@ -1,21 +1,8 @@
-import { getTitleOutput } from './utils'
+import { getTitleOutput, getToken } from './utils'
 
 const GITHUB_API_BASE_URL = 'https://api.github.com/repos'
 const isGitHubPullRequestPage = () => /.*github.com\/.*\/pull\/.*/.test(window.location.href)
 const isGitHubComparePage = () => /.*github.com\/.*\/compare\/.*/.test(window.location.href)
-
-async function getToken(key: string): Promise<string | null> {
-  return new Promise((resolve, reject) => {
-    chrome.runtime.sendMessage({ action: 'getToken', key }, (response) => {
-      if (response.success) {
-        resolve(response.token)
-      }
-      else {
-        reject(new Error(`Token not found for key: ${key}`))
-      }
-    })
-  })
-}
 
 async function fetchFilesFromGithub() {
   let GITHUB_API_TOKEN
@@ -127,8 +114,14 @@ async function getOutput() {
     try {
       aiMagicButton.textContent = 'AI generating...'
 
+      const GOOGLE_GEMINI_API_KEY = await getToken('aiApiKey')
+      if (!GOOGLE_GEMINI_API_KEY) {
+        console.error('Gemini API key not found.')
+        return []
+      }
+
       const prompt = await generatePrompt()
-      titleInput.value = await getTitleOutput(prompt)
+      titleInput.value = await getTitleOutput(prompt, GOOGLE_GEMINI_API_KEY)
 
       aiMagicButton.textContent = 'AI'
     }
