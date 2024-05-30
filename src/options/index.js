@@ -4,12 +4,14 @@ saveButton.addEventListener('click', saveOptions)
 
 function saveOptions() {
   const githubAccessToken = document.getElementById('github-access-token')
-  const geminiAPIKey = document.getElementById('gemini-api-key')
+  const aiApiKey = document.getElementById('ai-api-key')
+  const aiModel = document.getElementById('ai-model')
 
   chrome.storage.sync.set(
     {
       githubAccessToken: githubAccessToken.value,
-      geminiAPIKey: geminiAPIKey.value,
+      aiApiKey: aiApiKey.value,
+      aiModel: aiModel.value,
     },
     async () => {
       try {
@@ -34,11 +36,13 @@ async function restoreOptions() {
   chrome.storage.sync.get(
     {
       githubAccessToken: '',
-      geminiAPIKey: '',
+      aiApiKey: '',
+      aiModel: '',
     },
-    async ({ githubAccessToken, geminiAPIKey }) => {
+    async ({ githubAccessToken, aiApiKey, aiModel }) => {
       document.getElementById('github-access-token').value = githubAccessToken
-      document.getElementById('gemini-api-key').value = geminiAPIKey
+      document.getElementById('ai-api-key').value = aiApiKey
+      document.getElementById('ai-model').value = aiModel
 
       await verifyGithubAccessToken(githubAccessToken)
     },

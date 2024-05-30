@@ -8,9 +8,10 @@ body{
   padding: 10px;
 }
 
-input {
+input, select {
   background-color: #474749;
   color: white;
   padding: 4px;
   border-radius: 5px;
+  border: none;
 }

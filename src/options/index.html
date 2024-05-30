@@ -27,12 +27,24 @@
     <div id="repo-access-scope">Repository access: <span id="check-repo-access-scope">...</span></div>
   </div>
   <br>
-  <div>
-    <label style="display: flex;flex-direction: column;">
+  <div style="display: flex;flex-direction: column;gap: 15px;">
+    <label style="display: flex;flex-direction: column;gap: 2px">
       <span style="font-weight: 600;font-size: 16px;">
-        Gemini API Key:
+        Model:
       </span>
-      <input type="text" id="gemini-api-key" />
+      <select id="ai-model">
+        <option value="gemini-pro-vision">Gemini 1.0 Pro Vision</option>
+        <option value="gemini-1.0-pro">Gemini 1.0 Pro</option>
+        <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash</option>
+        <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro</option>
+      </select>
+    </label>
+
+    <label style="display: flex;flex-direction: column;gap: 2px">
+      <span style="font-weight: 600;font-size: 16px;">
+        AI API Key:
+      </span>
+      <input type="text" id="ai-api-key" />
       <a 
         style="color: #88AAF7;"
         target="_blank"

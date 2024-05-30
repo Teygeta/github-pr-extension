@@ -1,3 +1,5 @@
+import { getTitleOutput } from './utils'
+
 const GITHUB_API_BASE_URL = 'https://api.github.com/repos'
 const isGitHubPullRequestPage = () => /.*github.com\/.*\/pull\/.*/.test(window.location.href)
 const isGitHubComparePage = () => /.*github.com\/.*\/compare\/.*/.test(window.location.href)
@@ -91,6 +93,7 @@ async function generatePrompt() {
     const patchText = filename.includes('pnpm-lock.yaml') ? 'A long packages changes' : patch
     prompt += `File: ${filename}\n\n---START PATCH---\nPatch: ${patchText}\n---END PATCH---\n\n`
   }))
+
   const promptInstructions = `
     Write a title for the changes below in max 20 words.
     
@@ -116,58 +119,25 @@ Object.assign(aiMagicButton, {
   onclick: getOutput,
 })
 
-async function getTitleOutput() {
-  const prompt = await generatePrompt()
-  aiMagicButton.textContent = 'AI generating...'
-
-  let GOOGLE_GEMINI_API_KEY
-
-  try {
-    GOOGLE_GEMINI_API_KEY = await getToken('geminiAPIKey')
-    if (!GOOGLE_GEMINI_API_KEY) {
-      console.error('Gemini API key not found.')
-      return []
-    }
-  }
-  catch (error) {
-    console.error('Error retrieving token from storage:', error)
-    return []
-  }
-
-  if (!GOOGLE_GEMINI_API_KEY) {
-    console.error('Gemini API key not found.')
-    return []
-  }
-
-  try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${GOOGLE_GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-    })
-
-    if (!response.ok) {
-      throw new Error('AI failed to generate title')
-    }
-
-    const { candidates } = await response.json()
-    return candidates[0]?.content.parts[0]?.text || 'Error: AI failed to generate title'
-  }
-  catch (error) {
-    // TODO: error handling
-    return 'Error: AI failed to generate title'
-  }
-  finally {
-    aiMagicButton.textContent = 'AI'
-  }
-}
-
 async function getOutput() {
   const titleInputId = isGitHubComparePage() ? 'pull_request_title' : 'issue_title'
   const titleInput = document.getElementById(titleInputId)
 
   if (titleInput instanceof HTMLInputElement) {
-    titleInput.value = await getTitleOutput()
+    try {
+      aiMagicButton.textContent = 'AI generating...'
+
+      const prompt = await generatePrompt()
+      titleInput.value = await getTitleOutput(prompt)
+
+      aiMagicButton.textContent = 'AI'
+    }
+    catch (error) {
+      console.error('Error generating title:', error)
+    }
+    finally {
+      aiMagicButton.textContent = 'AI'
+    }
   }
 }
 
